@@ -47,27 +47,24 @@ def readSpectrum(fname):
 
 
 def process_data(data_working_diractory = '.'):
-    cc  = 2.9979245800000e10 # Light speed [cm/s]
-    fig = plt.figure()
-    s   = readSpectrum(os.path.join(data_working_diractory,'spectrum.out'))
-    lam = s[:,0] * 1.0e3
-    fnu = s[:,1]
-    nu  = 1.0e4*cc/s[:,0]
-    # nufnu = nu*fnu
-    # plt.plot(lam,nufnu)
-    # plt.yscale('log')
-    # plt.ylabel('$\\nu F_\\nu \; [\mathrm{erg}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}]$')
-    plt.plot(lam, -np.log10(fnu))
-    plt.gca().invert_yaxis()
+    cc   = 2.9979245800000e10 # Light speed [cm/s]
+    fig  = plt.figure()
+    s    = readSpectrum(os.path.join(data_working_diractory,'spectrum.out'))
+    lam  = s[:,0] * 1.0e3
+    fnu  = s[:,1]
+    nu   = 1.0e4*cc/s[:,0]
+    flam = 1.0e8*fnu*cc/s[:,0]**2
+    plt.plot(lam, np.log10(flam))
+    # plt.gca().invert_yaxis()
     plt.xlabel('$\lambda\; [\mathrm{nm}$]')
-    plt.ylabel(r'$\log\, F_\nu \; [\mathrm{erg}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}]$')
+    plt.ylabel(r'$\log\, F_\lambda \; [\mathrm{erg}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\,\mathrm{cm}^{-1}]$')
     plt.savefig(os.path.join(data_working_diractory, 'spectrum.png'))
     # plt.show()
-    # np.trapz(fnu, nu)
-    # integrate.simps(fnu, nu)
-    flux = np.sum(fnu)
+    # flux = np.sum(flam)
+    # flux = np.trapz(flam, lam*1.0e-4)
+    flux = integrate.simps(flam, s[:,0]*1.0e-4)
     with open(os.path.join(data_working_diractory, 'flux.out'), 'wt') as f:
-        f.write('{} sum( F_nu erg cm^-2 s^-1 )\n'.format(flux))
+        f.write('{} Simpson rule integration ( F_lambda erg cm^-2 s^-1 cm^-1 * d lambda [cm])\n'.format(flux))
     
     return flux
 
