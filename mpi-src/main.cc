@@ -22,10 +22,13 @@
 
 #include <mpi.h>
 #include <iostream>
+#include <string>
+#include "opt_data.h"
+#include "util.h"
 
 int main(int argc, char** argv) {
     // Initialize the MPI environment
-    MPI_Init(NULL, NULL);
+    MPI_Init(&argc, &argv);
 
     // Get the number of processes
     int world_size;
@@ -40,11 +43,52 @@ int main(int argc, char** argv) {
     int name_len;
     MPI_Get_processor_name(processor_name, &name_len);
 
-    // Print off a hello world message
-    std::cout<<"Hello world from processor "<<processor_name<<
+    // Get command line options
+    OptData opt_data(argc, argv);
+
+    // Print wellcome message
+    std::cout<<"Wellcome to rad-mp from processor "<<processor_name<<
                ", rank "<<world_rank<<
                " out of "<<world_size<<
                " processors"<<std::endl;
+
+    std::string check_point_to_process;
+
+    if (world_rank == 0)
+    {
+        // if not created then create the main radmc directory which contains all the check_point_radmc_dir
+        // Create list of flash check point to process per rank
+        std::vector<std::string> check_point_list = Create_Check_Point_list(opt_data["chk_dir"], opt_data["chk_prefix"]);
+
+        // rearrange the check_point_list the match the world_rank size and add colon between entries
+        check_point_list = ReArrange_chk_list(check_point_list, world_size);
+        // Send using point to point communication the data to the other ranks
+        // for(unsigned int i_rank=1; i_rank<world_size; ++i_rank)
+        //    MPI_Send();
+
+        // Initialize rank 0 check_point_to_process variable
+        // check_point_to_process = check_point_list[0];
+    }
+    else
+    {
+        //MPI_Recv();
+        //check_point_to_process;
+    }
+
+    // go over all check point (seperated by colon :)
+    // create check_point_radmc_dir
+    // run setup_radmc_sed.py
+    // copy additional files ['dustkappa_silicate.inp', 'dustopac.inp', 'radmc3d.inp']
+    // run radmc3d
+    // run plot_radmc_sed
+
+
+    // MPI_Barrier();
+    // if (world_rank == 0)
+    // {
+    //     //run gen_light_curve
+    //     //run plot_light_curve
+    // }
 
     // Finalize the MPI environment.
     MPI_Finalize();
