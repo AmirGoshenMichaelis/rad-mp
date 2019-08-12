@@ -35,6 +35,7 @@ const struct option OptData::longopts[] = {
     {"output_main_dir", required_argument, 0, 'o'},
     {"incl", required_argument, 0, 'a'},
     {"phi", required_argument, 0, 'b'},
+    {"refinement_level", required_argument, 0, 'l'},
     {"help", no_argument, 0, 'h'},
     {0, 0, 0, 0}
     };
@@ -83,6 +84,7 @@ void OptData::Print_Usage(void) const
                 "--py_radmc_dir dirctory containing the python scripts and *.inp files for radmc3d \n\t"<<
                 "--incl inclination angle angle pass into radmc3d \n\t"<<
                 "--phi phi angle pass into radmc3d \n\t"<<
+                "--refinement_level to be use to generate grid \n\t"<<
                 "--help print this message \n\t"<<
                 std::endl;
 }
