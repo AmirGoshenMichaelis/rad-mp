@@ -63,16 +63,23 @@ int main(int argc, char** argv) {
         // rearrange the check_point_list the match the world_rank size and add colon between entries
         check_point_list = ReArrange_chk_list(check_point_list, world_size);
         // Send using point to point communication the data to the other ranks
-        // for(unsigned int i_rank=1; i_rank<world_size; ++i_rank)
-        //    MPI_Send();
+        for(unsigned int i_rank=1; i_rank<world_size; ++i_rank)
+            MPI_Send(check_point_list[i_rank].c_str(), sizeof(check_point_list[i_rank].c_str()), MPI_CHAR, i_rank, MPI_ANY_TAG, MPI_COMM_WORLD);
 
         // Initialize rank 0 check_point_to_process variable
-        // check_point_to_process = check_point_list[0];
+        check_point_to_process = check_point_list[0];
     }
     else
     {
-        //MPI_Recv();
-        //check_point_to_process;
+        MPI_Status status;
+        char * chk_job;
+        int chk_job_size;
+        MPI_Probe(0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        MPI_Get_count(&status, MPI_CHAR, &chk_job_size);
+        chk_job = new char[chk_job_size];
+        MPI_Recv(chk_job, chk_job_size, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        check_point_to_process = chk_job;
+        delete[] chk_job;
     }
 
     // go over all check point (seperated by colon :)
@@ -89,7 +96,7 @@ int main(int argc, char** argv) {
     //     //run gen_light_curve
     //     //run plot_light_curve
     // }
-
+    std::cout<<"chk job - "<<check_point_to_process<<std::endl;
     // Finalize the MPI environment.
     MPI_Finalize();
 }
