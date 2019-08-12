@@ -23,5 +23,7 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> Create_Check_Point_list(const std::string chk_dir, const std::string  chk_prefix);
-std::vector<std::string> ReArrange_chk_list(const std::vector<std::string> &check_point_list, const int world_size);
+std::vector<std::string> Create_Check_Point_list(const std::string& chk_dir, const std::string& chk_prefix);
+std::vector<std::string> ReArrange_Chk_List(const std::vector<std::string>& check_point_list, const int world_size);
+std::vector<std::string> Split(const std::string& s, char delimiter);
+bool Create_Directory(const std::string& dir_name);

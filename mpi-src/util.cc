@@ -20,13 +20,17 @@
 //  \brief Utilities mainly for accessing the directory entry and more.
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <limits.h>
- #include <stdlib.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <glob.h>
 #include "util.h"
 
-std::vector<std::string> Create_Check_Point_list(const std::string chk_dir, const std::string  chk_prefix) {
+std::vector<std::string> Create_Check_Point_list(const std::string& chk_dir, const std::string& chk_prefix) {
     std::vector<std::string> check_point_list;
     glob_t globbuf;
     char * resolved_path;
@@ -42,7 +46,7 @@ std::vector<std::string> Create_Check_Point_list(const std::string chk_dir, cons
     return check_point_list;
 }
 
-std::vector<std::string> ReArrange_chk_list(const std::vector<std::string> &check_point_list, const int world_size)
+std::vector<std::string> ReArrange_Chk_List(const std::vector<std::string>& check_point_list, const int world_size)
 {
     std::vector<std::string> chk_jobs(world_size);
     const int job_size = check_point_list.size()/world_size;
@@ -61,4 +65,38 @@ std::vector<std::string> ReArrange_chk_list(const std::vector<std::string> &chec
         }
     }
     return(chk_jobs);
+}
+
+std::vector<std::string> Split(const std::string& s, char delimiter)
+{
+   std::vector<std::string> tokens;
+   std::string token;
+   std::istringstream tokenStream(s);
+   while (std::getline(tokenStream, token, delimiter))
+   {
+      tokens.push_back(token);
+   }
+   return tokens;
+}
+/* Split option with regex
+std::regex sep ("[ ,.]+");
+std::sregex_token_iterator tokens(text.cbegin(), text.cend(), sep, -1);
+std::sregex_token_iterator end;
+for(; tokens != end; ++tokens){
+      std::cout << "token found: " << *tokens << "\n";
+}
+ */
+
+bool Create_Directory(const std::string& dir_name)
+{
+    bool status = true;
+    char * resolved_path;
+    resolved_path = canonicalize_file_name(dir_name.c_str());
+    struct stat myStat;
+    status = stat(resolved_path, &myStat) == 0;
+    if ( ((myStat.st_mode) & S_IFMT) != S_IFDIR )
+        status = mkdir(resolved_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    free(resolved_path);
+
+    return status;
 }

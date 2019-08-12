@@ -23,6 +23,8 @@
 #include <mpi.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <cstdlib>
 #include "opt_data.h"
 #include "util.h"
 
@@ -52,16 +54,20 @@ int main(int argc, char** argv) {
                " out of "<<world_size<<
                " processors"<<std::endl;
 
+    std::string dir_name;
     std::string check_point_to_process;
 
     if (world_rank == 0)
     {
         // if not created then create the main radmc directory which contains all the check_point_radmc_dir
+        dir_name = opt_data["output_main_dir"]+"/radmc3d_processing_db-incl-"+opt_data["incl"]+"-phi-"+opt_data["phi"];
+        Create_Directory(dir_name);
+
         // Create list of flash check point to process per rank
         std::vector<std::string> check_point_list = Create_Check_Point_list(opt_data["chk_dir"], opt_data["chk_prefix"]);
 
         // rearrange the check_point_list the match the world_rank size and add colon between entries
-        check_point_list = ReArrange_chk_list(check_point_list, world_size);
+        check_point_list = ReArrange_Chk_List(check_point_list, world_size);
 
         // Send using point to point communication the data to the other ranks
         for(unsigned int i_rank=1; i_rank<world_size; ++i_rank) 
@@ -72,6 +78,7 @@ int main(int argc, char** argv) {
     }
     else
     {
+        // receive from rank 0 the require job list (separate by colon :).
         MPI_Status status;
         char * chk_job;
         int chk_job_size;
@@ -84,20 +91,43 @@ int main(int argc, char** argv) {
     }
 
     // go over all check point (seperated by colon :)
-    // create check_point_radmc_dir
-    // run setup_radmc_sed.py
-    // copy additional files ['dustkappa_silicate.inp', 'dustopac.inp', 'radmc3d.inp']
-    // run radmc3d
-    // run plot_radmc_sed
+    std::vector<std::string> chk_job_list = Split(check_point_to_process, ':');
 
+    for(auto chk_file:chk_job_list) {
+        // create check_point_radmc_dir
+        std::string job_dir_name = dir_name+chk_file;
+        Create_Directory(job_dir_name);
+        std::cout<<"process job "<<world_rank<<" --- "<<chk_file<<std::endl;
+        // run setup_radmc_sed.py
+        std::ostringstream cmd;
+        cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/setup_radmc_sed.py"<<" --dir "<<job_dir_name<< " --flash_chk "<<chk_file<<" --level "<<opt_data["refinement_level"];
+        std::system(cmd.str().c_str());
+        // copy additional files
+        std::vector<std::string> file_to_copy {"dustkappa_silicate.inp", "dustopac.inp", "radmc3d.inp"};
+        for(auto file_name: file_to_copy) {
+            cmd.str("");
+            cmd.clear();
+            cmd<<"cp "<<opt_data["py_radmc_dir"]<<"/"<<file_name<<" "<<job_dir_name<<"/";
+            std::system(cmd.str().c_str());
+        }
+        // run radmc3d
+        cmd.str("");
+        cmd.clear();
+        cmd<<"cd "<<job_dir_name<<"; radmc3d ";
+        std::system(cmd.str().c_str());
+        // run plot_radmc_sed
+        cmd.str("");
+        cmd.clear();
+        cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/plot_radmc_sed.py"<<" --dir "<<job_dir_name;
+        std::system(cmd.str().c_str());
+    }
 
-    // MPI_Barrier();
-    // if (world_rank == 0)
-    // {
-    //     //run gen_light_curve
-    //     //run plot_light_curve
-    // }
-    std::cout<<"chk job "<<world_rank<<" - "<<check_point_to_process<<std::endl<<std::endl<<std::endl;
+    // MPI_Barrier(MPI_COMM_WORLD);
+    if (world_rank == 0) {
+        std::cout<<"run the following commands:"<<std::endl;
+        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/run gen_light_curve.py"<<" --chk_dir "<<dir_name<<" --chk_db_prefix "<<opt_data["chk_prefix"]<<" --verbose"<<std::endl;
+        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/run plot_light_curve.py"<<" --file "<<dir_name<<"/light_curve.out"<<" --not_interactive"<<std::endl;
+    }
     // Finalize the MPI environment.
     MPI_Finalize();
 }

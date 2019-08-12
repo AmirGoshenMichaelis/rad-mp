@@ -32,6 +32,7 @@ const struct option OptData::longopts[] = {
     {"chk_prefix", required_argument, 0, 'p'},
     {"python_yt", required_argument, 0, 'i'},
     {"py_radmc_dir", required_argument, 0, 's'},
+    {"output_main_dir", required_argument, 0, 'o'},
     {"incl", required_argument, 0, 'a'},
     {"phi", required_argument, 0, 'b'},
     {"help", no_argument, 0, 'h'},
@@ -47,6 +48,7 @@ OptData::OptData(const int argc, char * const *argv) {
     opt["chk_prefix"] = "";
     opt["python_yt"] = "/usr/bin/python";
     opt["py_radmc_dir"] = cwd;
+    opt["output_main_dir"] = cwd;
     opt["incl"] = "0.0";
     opt["phi"] = "0.0";
     opt["refinement_level"] = "2";
@@ -77,6 +79,7 @@ void OptData::Print_Usage(void) const
                 "--chk_dir directory containing the check points \n\t"<<
                 "--chk_prefix the pattern for the flash check file to process \n\t"<<
                 "--python_yt command to run python interperter that support yt  \n\t"<<
+                "--output_main_dir \n\t"<<
                 "--py_radmc_dir dirctory containing the python scripts and *.inp files for radmc3d \n\t"<<
                 "--incl inclination angle angle pass into radmc3d \n\t"<<
                 "--phi phi angle pass into radmc3d \n\t"<<
