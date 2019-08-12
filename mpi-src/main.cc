@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
         // run radmc3d
         cmd.str("");
         cmd.clear();
-        cmd<<"cd "<<job_dir_name<<"; radmc3d ";
+        cmd<<"cd "<<job_dir_name<<"; radmc3d sed"<<" incl "<<opt_data["incl"]<<" phi "<<opt_data["phi"];
         Run_Cmd(cmd.str().c_str());
         // run plot_radmc_sed
         cmd.str("");
