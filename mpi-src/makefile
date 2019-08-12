@@ -2,7 +2,7 @@
 MPI_PATH  = /lib64/openmpi/
 
 CC   = ${MPI_PATH}/bin/mpicc
-CPP  = ${MPI_PATH}/bin/mpiCC
+CPP  = ${MPI_PATH}/bin/mpic++
 
 #----------------------------------------------------------------------------
 # Compiler flags
@@ -25,4 +25,4 @@ ECHO = echo
 
 
 all: main.cc opt_data.cc util.cc opt_data.h util.h
-	/usr/lib64/openmpi/bin/mpic++ -g main.cc opt_data.cc util.cc -o main
+	$(CPP) -g main.cc opt_data.cc util.cc -o main
