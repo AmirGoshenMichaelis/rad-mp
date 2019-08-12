@@ -101,32 +101,36 @@ int main(int argc, char** argv) {
         // run setup_radmc_sed.py
         std::ostringstream cmd;
         cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/setup_radmc_sed.py"<<" --dir "<<job_dir_name<< " --flash_chk "<<chk_file<<" --level "<<opt_data["refinement_level"];
-        std::system(cmd.str().c_str());
+        //FIXME: std::system(cmd.str().c_str());
+        std::cout<<cmd.str().c_str()<<std::endl;
         // copy additional files
         std::vector<std::string> file_to_copy {"dustkappa_silicate.inp", "dustopac.inp", "radmc3d.inp"};
         for(auto file_name: file_to_copy) {
             cmd.str("");
             cmd.clear();
             cmd<<"cp "<<opt_data["py_radmc_dir"]<<"/"<<file_name<<" "<<job_dir_name<<"/";
-            std::system(cmd.str().c_str());
+            //FIXME: std::system(cmd.str().c_str());
+            std::cout<<cmd.str().c_str()<<std::endl;
         }
         // run radmc3d
         cmd.str("");
         cmd.clear();
         cmd<<"cd "<<job_dir_name<<"; radmc3d ";
-        std::system(cmd.str().c_str());
+        //FIXME: std::system(cmd.str().c_str());
+        std::cout<<cmd.str().c_str()<<std::endl;
         // run plot_radmc_sed
         cmd.str("");
         cmd.clear();
         cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/plot_radmc_sed.py"<<" --dir "<<job_dir_name;
-        std::system(cmd.str().c_str());
+        //FIXME: std::system(cmd.str().c_str());
+        std::cout<<cmd.str().c_str()<<std::endl;
     }
 
     // MPI_Barrier(MPI_COMM_WORLD);
     if (world_rank == 0) {
         std::cout<<"run the following commands:"<<std::endl;
-        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/run gen_light_curve.py"<<" --chk_dir "<<dir_name<<" --chk_db_prefix "<<opt_data["chk_prefix"]<<" --verbose"<<std::endl;
-        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/run plot_light_curve.py"<<" --file "<<dir_name<<"/light_curve.out"<<" --not_interactive"<<std::endl;
+        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/gen_light_curve.py"<<" --chk_dir "<<dir_name<<" --chk_db_prefix "<<opt_data["chk_prefix"]<<" --verbose"<<std::endl;
+        std::cout<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/plot_light_curve.py"<<" --file "<<dir_name<<"/light_curve.out"<<" --not_interactive"<<std::endl;
     }
     // Finalize the MPI environment.
     MPI_Finalize();

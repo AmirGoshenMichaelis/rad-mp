@@ -79,7 +79,7 @@ void OptData::Print_Usage(void) const
                 "--chk_dir directory containing the check points \n\t"<<
                 "--chk_prefix the pattern for the flash check file to process \n\t"<<
                 "--python_yt command to run python interperter that support yt  \n\t"<<
-                "--output_main_dir \n\t"<<
+                "--output_main_dir directory name to output the radmc3d_db_... basedir \n\t"<<
                 "--py_radmc_dir dirctory containing the python scripts and *.inp files for radmc3d \n\t"<<
                 "--incl inclination angle angle pass into radmc3d \n\t"<<
                 "--phi phi angle pass into radmc3d \n\t"<<
