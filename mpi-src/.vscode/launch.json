@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["--chk_dir", ".", "--chk_prefix", "ut"],
+            "args": ["--chk_dir", "~/Public/flash_thick_disk/object-result/res-004/", "--chk_prefix", "disk_hdf5_chk"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

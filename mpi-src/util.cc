@@ -45,16 +45,20 @@ std::vector<std::string> Create_Check_Point_list(const std::string chk_dir, cons
 std::vector<std::string> ReArrange_chk_list(const std::vector<std::string> &check_point_list, const int world_size)
 {
     std::vector<std::string> chk_jobs(world_size);
-    unsigned int rank = 0;
+    const int job_size = check_point_list.size()/world_size;
+    int rank = 0;
+    std::string part_char("");
 
     if( check_point_list.empty() )
         return chk_jobs;
 
-    chk_jobs[0] = check_point_list[0];
-    for(unsigned int i = 1; i<check_point_list.size(); ++i) {
-        chk_jobs[rank].append(":").append(check_point_list[i]); 
-        if( (i+1)%world_size && rank<(world_size-1) )
+    for(unsigned int i = 0; i<check_point_list.size(); ++i) {
+        chk_jobs[rank].append(part_char).append(check_point_list[i]);
+        part_char = ":"; 
+        if( (((i+1)%job_size)==0) && rank<(world_size-1) ) {
             rank++;
+            part_char = "";
+        }
     }
     return(chk_jobs);
 }
