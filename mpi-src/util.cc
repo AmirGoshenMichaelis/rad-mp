@@ -21,6 +21,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <vector>
 #include <libgen.h>
 #include <limits.h>
@@ -108,4 +109,10 @@ std::string Get_Base_Name(const std::string& path)
     std::string base_name(base);
     free(p);
     return base_name;
+}
+
+void Run_Cmd(const char * cmd) 
+{
+    std::cout<<cmd<<std::endl;
+    system(cmd);
 }

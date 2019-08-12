@@ -24,7 +24,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <cstdlib>
 #include "opt_data.h"
 #include "util.h"
 
@@ -54,13 +53,12 @@ int main(int argc, char** argv) {
                " out of "<<world_size<<
                " processors"<<std::endl;
 
-    std::string dir_name;
+    std::string dir_name = opt_data["output_main_dir"]+"/radmc3d_db-incl-"+opt_data["incl"]+"-phi-"+opt_data["phi"];
     std::string check_point_to_process;
 
     if (world_rank == 0)
     {
         // if not created then create the main radmc directory which contains all the check_point_radmc_dir
-        dir_name = opt_data["output_main_dir"]+"/radmc3d_db-incl-"+opt_data["incl"]+"-phi-"+opt_data["phi"];
         Create_Directory(dir_name);
 
         // Create list of flash check point to process per rank
@@ -101,29 +99,25 @@ int main(int argc, char** argv) {
         // run setup_radmc_sed.py
         std::ostringstream cmd;
         cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/setup_radmc_sed.py"<<" --dir "<<job_dir_name<< " --flash_chk "<<chk_file<<" --level "<<opt_data["refinement_level"];
-        //FIXME: std::system(cmd.str().c_str());
-        std::cout<<cmd.str().c_str()<<std::endl;
+        Run_Cmd(cmd.str().c_str());
         // copy additional files
         std::vector<std::string> file_to_copy {"dustkappa_silicate.inp", "dustopac.inp", "radmc3d.inp"};
         for(auto file_name: file_to_copy) {
             cmd.str("");
             cmd.clear();
             cmd<<"cp "<<opt_data["py_radmc_dir"]<<"/"<<file_name<<" "<<job_dir_name<<"/";
-            //FIXME: std::system(cmd.str().c_str());
-            std::cout<<cmd.str().c_str()<<std::endl;
+            Run_Cmd(cmd.str().c_str());
         }
         // run radmc3d
         cmd.str("");
         cmd.clear();
         cmd<<"cd "<<job_dir_name<<"; radmc3d ";
-        //FIXME: std::system(cmd.str().c_str());
-        std::cout<<cmd.str().c_str()<<std::endl;
+        Run_Cmd(cmd.str().c_str());
         // run plot_radmc_sed
         cmd.str("");
         cmd.clear();
         cmd<<opt_data["python_yt"]<<" "<<opt_data["py_radmc_dir"]<<"/plot_radmc_sed.py"<<" --dir "<<job_dir_name;
-        //FIXME: std::system(cmd.str().c_str());
-        std::cout<<cmd.str().c_str()<<std::endl;
+        Run_Cmd(cmd.str().c_str());
     }
 
     // MPI_Barrier(MPI_COMM_WORLD);
