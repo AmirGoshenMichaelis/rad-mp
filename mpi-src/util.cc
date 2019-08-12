@@ -22,12 +22,14 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <libgen.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <glob.h>
+#include <string.h>
 #include "util.h"
 
 std::vector<std::string> Create_Check_Point_list(const std::string& chk_dir, const std::string& chk_prefix) {
@@ -69,14 +71,12 @@ std::vector<std::string> ReArrange_Chk_List(const std::vector<std::string>& chec
 
 std::vector<std::string> Split(const std::string& s, char delimiter)
 {
-   std::vector<std::string> tokens;
-   std::string token;
-   std::istringstream tokenStream(s);
-   while (std::getline(tokenStream, token, delimiter))
-   {
-      tokens.push_back(token);
-   }
-   return tokens;
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter))
+        tokens.push_back(token);
+    return tokens;
 }
 /* Split option with regex
 std::regex sep ("[ ,.]+");
@@ -99,4 +99,13 @@ bool Create_Directory(const std::string& dir_name)
     free(resolved_path);
 
     return status;
+}
+
+std::string Get_Base_Name(const std::string& path)
+{
+    char * p = strdup(path.c_str());
+    char * base = basename(p);
+    std::string base_name(base);
+    free(p);
+    return base_name;
 }

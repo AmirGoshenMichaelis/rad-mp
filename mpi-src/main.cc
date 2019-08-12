@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     if (world_rank == 0)
     {
         // if not created then create the main radmc directory which contains all the check_point_radmc_dir
-        dir_name = opt_data["output_main_dir"]+"/radmc3d_processing_db-incl-"+opt_data["incl"]+"-phi-"+opt_data["phi"];
+        dir_name = opt_data["output_main_dir"]+"/radmc3d_db-incl-"+opt_data["incl"]+"-phi-"+opt_data["phi"];
         Create_Directory(dir_name);
 
         // Create list of flash check point to process per rank
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 
     for(auto chk_file:chk_job_list) {
         // create check_point_radmc_dir
-        std::string job_dir_name = dir_name+chk_file;
+        std::string job_dir_name = dir_name+"/"+Get_Base_Name(chk_file);
         Create_Directory(job_dir_name);
         std::cout<<"process job "<<world_rank<<" --- "<<chk_file<<std::endl;
         // run setup_radmc_sed.py
