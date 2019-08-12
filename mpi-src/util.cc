@@ -91,13 +91,14 @@ for(; tokens != end; ++tokens){
 bool Create_Directory(const std::string& dir_name)
 {
     bool status = true;
-    char * resolved_path;
-    resolved_path = canonicalize_file_name(dir_name.c_str());
-    struct stat myStat;
-    status = stat(resolved_path, &myStat) == 0;
-    if ( ((myStat.st_mode) & S_IFMT) != S_IFDIR )
-        status = mkdir(resolved_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    free(resolved_path);
+    status = mkdir(dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    // char * resolved_path;
+    // resolved_path = canonicalize_file_name(dir_name.c_str());
+    // struct stat myStat;
+    // status = stat(resolved_path, &myStat) == 0;
+    // if ( ((myStat.st_mode) & S_IFMT) != S_IFDIR )
+    //     status = mkdir(resolved_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    // free(resolved_path);
 
     return status;
 }
