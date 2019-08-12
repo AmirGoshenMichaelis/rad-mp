@@ -26,3 +26,4 @@ ECHO = echo
 
 all: main.cc opt_data.cc util.cc opt_data.h util.h
 	$(CPP) -g main.cc opt_data.cc util.cc -o main
+# add clean option
