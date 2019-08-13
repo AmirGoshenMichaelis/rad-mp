@@ -88,17 +88,22 @@ def create_radmc_inp(working_directory, flash_checkpoint_file, refinement_level)
     wavelengths_micron = np.linspace(100.0e-3, 2000e-3, 2000)
     write_source_files_with_path(working_directory, sources_list, wavelengths_micron)
 
+    # The gradient operator requires periodic boundaries.  This dataset has
+    # open boundary conditions.  We need to hack it for now (this will be fixed
+    # in future version of yt)
+    ds.periodicity = (True, True, True)
+
     def _envelope_Density(field, data):
         # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
         # data["density"][outside_region] = 2.0e-16
         return data["density"]
-    ds.add_field(("gas", "envelope_density"), function=_envelope_Density, units="g/cm**3")
+    ds.add_field(("gas", "envelope_density"), function=_envelope_Density, units="g/cm**3", sampling_type='cell')
 
     def _envelope_Density_Number(field, data):
         # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
         # data["density"][outside_region] = 2.0e-16
         return data["density"]/m_H
-    ds.add_field(("gas", "envelope_density_number"), function=_envelope_Density_Number, units="1/cm**3")
+    ds.add_field(("gas", "envelope_density_number"), function=_envelope_Density_Number, units="1/cm**3", sampling_type='cell')
 
     writer.write_dust_file(("gas", "envelope_density"), os.path.join(working_directory,"dust_density.inp"))
     writer.write_dust_file(("gas", "envelope_density_number"), os.path.join(working_directory,"electron_numdens.inp"))
@@ -108,13 +113,13 @@ def create_radmc_inp(working_directory, flash_checkpoint_file, refinement_level)
         # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
         # data["tele"][outside_region] = 1000.0
         return data["tele"]
-    ds.add_field(("gas", "envelope_tele"), function=_envelope_Temperature_ELE, units="K")
+    ds.add_field(("gas", "envelope_tele"), function=_envelope_Temperature_ELE, units="K", sampling_type='cell')
 
     def _envelope_Temperature_ION(field, data):
         # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
         # data["tion"][outside_region] = 1000.0
         return data["tion"]
-    ds.add_field(("gas", "envelope_tion"), function=_envelope_Temperature_ION, units="K")
+    ds.add_field(("gas", "envelope_tion"), function=_envelope_Temperature_ION, units="K", sampling_type='cell')
 
     writer.write_dust_file(("gas", "envelope_tele"), os.path.join(working_directory,"dust_temperature.dat"))
     writer.write_dust_file(("gas", "envelope_tion"), os.path.join(working_directory,"gas_temperature.inp"))
