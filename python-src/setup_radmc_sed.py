@@ -77,11 +77,11 @@ def create_radmc_inp(working_directory, flash_checkpoint_file, refinement_level)
 
     m_H = yt.utilities.physical_constants.mass_hydrogen_cgs
     M_star = 8.0
-    R_star = 5.0
+    R_star = 4.4485
     radius_cm = 6.96e10*R_star
     mass_g   = 1.989e33*M_star
     position_cm = [0.0, 0.0, 0.0]
-    temperature_K = 20000.0
+    temperature_K = 21000.0
 
     star = RadMC3DSource(radius_cm, mass_g, position_cm, temperature_K)
     sources_list = [star]
@@ -109,20 +109,20 @@ def create_radmc_inp(working_directory, flash_checkpoint_file, refinement_level)
     writer.write_dust_file(("gas", "envelope_density_number"), os.path.join(working_directory,"electron_numdens.inp"))
     writer.write_dust_file(("gas", "envelope_density_number"), os.path.join(working_directory,"ion_numdens.inp"))
 
-    def _envelope_Temperature_ELE(field, data):
-        # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
-        # data["tele"][outside_region] = 1000.0
-        return data["tele"]
-    ds.add_field(("gas", "envelope_tele"), function=_envelope_Temperature_ELE, units="K", sampling_type='cell')
+    # def _envelope_Temperature_ELE(field, data):
+    #     # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
+    #     # data["tele"][outside_region] = 1000.0
+    #     return data["tele"]
+    # ds.add_field(("gas", "envelope_tele"), function=_envelope_Temperature_ELE, units="K", sampling_type='cell')
 
-    def _envelope_Temperature_ION(field, data):
-        # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
-        # data["tion"][outside_region] = 1000.0
-        return data["tion"]
-    ds.add_field(("gas", "envelope_tion"), function=_envelope_Temperature_ION, units="K", sampling_type='cell')
+    # def _envelope_Temperature_ION(field, data):
+    #     # outside_region = (data["x"]*data["y"]*data["z"])>=radius_cm**2
+    #     # data["tion"][outside_region] = 1000.0
+    #     return data["tion"]
+    # ds.add_field(("gas", "envelope_tion"), function=_envelope_Temperature_ION, units="K", sampling_type='cell')
 
-    writer.write_dust_file(("gas", "envelope_tele"), os.path.join(working_directory,"dust_temperature.dat"))
-    writer.write_dust_file(("gas", "envelope_tion"), os.path.join(working_directory,"gas_temperature.inp"))
+    # writer.write_dust_file(("gas", "envelope_tele"), os.path.join(working_directory,"dust_temperature.dat"))
+    # writer.write_dust_file(("gas", "envelope_tion"), os.path.join(working_directory,"gas_temperature.inp"))
 
     # print('Run \n\tradmc3d sed incl 20 phi 80')
     # os.system('radmc3d sed incl 20 phi 80')
