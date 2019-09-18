@@ -111,12 +111,12 @@ int main(int argc, char** argv) {
         // run radmc3d mctherm
         cmd.str("");
         cmd.clear();
-        cmd<<"cd "<<job_dir_name<<"; radmc3d mctherm";
+        cmd<<"cd "<<job_dir_name<<"; "<<opt_data["py_radmc_dir"]<<"/radmc3d.exe mctherm";
         Run_Cmd(cmd.str().c_str());
         // run radmc3d sed
         cmd.str("");
         cmd.clear();
-        cmd<<"cd "<<job_dir_name<<"; radmc3d sed"<<" incl "<<opt_data["incl"]<<" phi "<<opt_data["phi"];
+        cmd<<"cd "<<job_dir_name<<"; "<<opt_data["py_radmc_dir"]<<"/radmc3d.exe sed"<<" incl "<<opt_data["incl"]<<" phi "<<opt_data["phi"];
         Run_Cmd(cmd.str().c_str());
         // run plot_radmc_sed
         cmd.str("");
