@@ -109,10 +109,10 @@ int main(int argc, char** argv) {
             Run_Cmd(cmd.str().c_str());
         }
         // run radmc3d mctherm
-        cmd.str("");
-        cmd.clear();
-        cmd<<"cd "<<job_dir_name<<"; "<<opt_data["py_radmc_dir"]<<"/radmc3d.exe mctherm";
-        Run_Cmd(cmd.str().c_str());
+        // cmd.str("");
+        // cmd.clear();
+        // cmd<<"cd "<<job_dir_name<<"; "<<opt_data["py_radmc_dir"]<<"/radmc3d.exe mctherm";
+        // Run_Cmd(cmd.str().c_str());
         // run radmc3d sed
         cmd.str("");
         cmd.clear();
