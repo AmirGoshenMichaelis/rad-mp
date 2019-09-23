@@ -25,7 +25,7 @@ def process(file_name, interactive = False):
     plt.plot(time, -np.log10(flux))
     plt.gca().invert_yaxis()
     plt.xlabel('t [Simulation time units]')
-    plt.ylabel(r'$-\log \, F \; [\mathrm{erg}\, \mathrm{cm}^{-2}\, \mathrm{s}^{-1}$')
+    plt.ylabel(r'$-\log \, F \; [\mathrm{erg}\, \mathrm{cm}^{-2}\, \mathrm{s}^{-1}] $')
     plt.title('Light curve - Flux vs. Time')
     os.path.basename(file_name)
     fig_file_name = os.path.join(os.path.dirname(file_name),'light_curve.png')
