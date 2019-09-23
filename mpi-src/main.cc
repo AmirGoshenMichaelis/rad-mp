@@ -133,5 +133,10 @@ int main(int argc, char** argv) {
     }
     // Finalize the MPI environment.
     MPI_Finalize();
+    std::cout<<"Finalized rad-mp from processor "<<processor_name<<
+               ", rank "<<world_rank<<
+               " out of "<<world_size<<
+               " processors"<<std::endl;
+    exit (EXIT_SUCCESS);
 }
 
